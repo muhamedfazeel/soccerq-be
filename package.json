@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "src/server.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/soccerq/soccerq-be"
+  },
   "scripts": {
     "build": "npx tsc",
     "start": "node dist/server.js",
