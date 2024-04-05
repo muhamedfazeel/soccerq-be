@@ -1,6 +1,5 @@
 import express from "express";
 import bodyParser from "body-parser";
-import path from "path";
 
 // Create Express server
 const app = express();
