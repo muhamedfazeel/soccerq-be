@@ -1,4 +1,5 @@
 import app from "./app";
+import "./database/connection";
 
 /**
  * Start Express server.
@@ -10,6 +11,7 @@ const server = app.listen(app.get("port"), () => {
     app.get("env")
   );
   console.log("  Press CTRL-C to stop\n");
+  console.log("connecting to database");
 });
 
 export default server;
