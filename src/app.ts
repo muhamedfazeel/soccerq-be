@@ -1,6 +1,8 @@
 import express from "express";
 import bodyParser from "body-parser";
+import dotenv from "dotenv";
 
+dotenv.config();
 // Create Express server
 const app = express();
 
