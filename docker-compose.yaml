@@ -9,4 +9,4 @@ services:
       POSTGRES_USER: soccerq
       POSTGRES_PASSWORD: soccerq
     ports:
-      - "5433:5432"
+      - "5432:5432"

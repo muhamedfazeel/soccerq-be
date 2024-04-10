@@ -1,7 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
-
+import cors from "cors";
 // App Routes (route handlers)
 import appRoutes from "./routes/routes";
 
@@ -13,6 +13,7 @@ const app = express();
 app.set("port", process.env.PORT || 3000);
 
 // Middlewares
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
