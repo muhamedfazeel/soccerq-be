@@ -1,13 +1,12 @@
 import { Pool, PoolClient, QueryResult, QueryResultRow } from "pg";
-import { config } from "../config/config";
 
 const pool = new Pool({
-  host: config.db.host,
-  user: config.db.user,
-  database: config.db.database,
+  host: process.env.PGHOST,
+  user: process.env.PGUSER,
+  database: process.env.PGDATABASE,
+  port: Number(process.env.PGPORT),
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 2000,
-  port: +config.db.port,
 });
 
 pool

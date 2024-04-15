@@ -11,7 +11,12 @@
     "build": "npx tsc",
     "start": "node dist/server.js",
     "dev": "nodemon src/server.ts",
-    "prestart": "npm run build"
+    "prestart": "npm run build",
+    "create:migration": "knex migrate:make",
+    "start:migrations": "knex migrate:latest --env develop",
+    "revert:migrations": "knex migrate:rollback --env develop",
+    "create:seed": "knex seed:make",
+    "start:seed": "knex seed:run"
   },
   "author": "",
   "license": "ISC",
@@ -23,11 +28,14 @@
     "express": "^4.19.2",
     "google-auth-library": "^9.7.0",
     "http-status": "^1.7.4",
+    "jsonwebtoken": "^9.0.2",
+    "knex": "^3.1.0",
     "pg": "^8.11.5"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^20.12.4",
     "@typescript-eslint/eslint-plugin": "^7.5.0",
     "@typescript-eslint/parser": "^7.5.0",
