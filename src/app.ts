@@ -1,8 +1,9 @@
-import express from "express";
 import bodyParser from "body-parser";
-import dotenv from "dotenv";
 import cors from "cors";
+import dotenv from "dotenv";
+import express from "express";
 // App Routes (route handlers)
+import { errorHandler } from "./middleware/errorHandler";
 import appRoutes from "./routes/routes";
 
 dotenv.config();
@@ -20,7 +21,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 /**
  * Primary app routes.
  */
+app.use("/api/v1/auth", appRoutes.authRoutes);
 app.use("/api/v1/users", appRoutes.userRoutes);
+
+//error handling middleware
+app.use(errorHandler);
 
 export const router = express.Router();
 export default app;

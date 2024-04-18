@@ -7,6 +7,8 @@ export async function up(knex: Knex): Promise<void> {
     table.string("email").notNullable().unique();
     table.string("img_url").notNullable();
     table.boolean("is_active").defaultTo(true);
+    table.boolean("is_player").defaultTo(true);
+    table.bigint("updated_by").defaultTo(null);
     table
       .timestamp("created_at", { useTz: true })
       .defaultTo(knex.fn.now())

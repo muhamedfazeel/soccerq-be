@@ -1,14 +1,50 @@
-import { OAuth2Client, TokenPayload } from "google-auth-library";
-import { config } from "../../config/config";
+const fs = require("fs");
+import { parse as csvParser } from "csv";
+import { parseOptions } from "./dto/import-interface";
+import { UserDto } from "./dto/userDto";
+import * as userRepo from "./user.repo";
 
-export const loginUser = async (credential: string) => {
-  const client = new OAuth2Client();
+export const getAllUsers = async (): Promise<Array<UserDto>> => {
+  try {
+    const data = await userRepo.getAllUsers();
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
 
-  const ticket = await client.verifyIdToken({
-    idToken: credential,
-    audience: config.google.clientId,
-  });
-  const payload: TokenPayload | undefined = ticket.getPayload(); // Ensure payload is of type TokenPayload
-  const userid: string | null = payload ? payload.sub : null;
-  return { payload, userid };
+export const getUserById = async (id: number) => {
+  try {
+    return await userRepo.getUserById(id);
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const uploadCsv = async (file: any, userId: number | undefined) => {
+  const userData: any = [];
+
+  const parseOptions: parseOptions = {
+    relax: true,
+    columns: true,
+    skip_empty_lines: true,
+    relax_column_count: true,
+  };
+  fs.createReadStream(file.path)
+    .pipe(csvParser(parseOptions))
+    .on("data", function (row: any) {
+      userData.push(row);
+    })
+    .on("end", async () => {
+      try {
+        await userRepo.insertUserData(userData, userId);
+        fs.unlinkSync(file.path);
+        return;
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
+    });
 };

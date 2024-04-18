@@ -1,45 +1,56 @@
-import { Request, Response } from "express";
-import httpStatus from "http-status";
-import jwt from "jsonwebtoken";
-import * as userRepo from "./user.repo";
+import { NextFunction, Request, Response } from "express";
+import { TokenRequest } from "../../shared/dto/modifiedRequest.dto";
+import { SoccerQResponse } from "../../util/response.class";
 import * as userService from "./user.service";
 
-export const getAllUsers = (req: Request, res: Response) => {
-  res.send("All users");
+export const getAllUsers = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const data = await userService.getAllUsers();
+    res.status(200).json(new SoccerQResponse(200, data, null));
+  } catch (err) {
+    res.status(500);
+    next(err);
+  }
 };
 
-export const loginUser = async (req: Request, res: Response) => {
-  const credential: string | undefined = req.headers["x-user-auth-token"] as
-    | string
-    | undefined; // Type assertion for better type inference
-  if (credential) {
-    userService
-      .loginUser(credential)
-      .then(async (data) => {
-        const user = await userRepo.upsertUserData(
-          data?.payload?.name,
-          data?.payload?.email,
-          data?.payload?.picture
-        );
-        if (user) {
-          const token = jwt.sign(
-            {
-              user: { email: user.email, name: user.name, id: user.id },
-            },
-            process.env.TOKEN_SECRET || "",
-            { expiresIn: "100m" }
-          );
-          res.status(201).json({ token });
-        } else {
-          res.status(401);
-          throw new Error("unauthorised");
-        }
-      })
-      .catch((err) => {
-        console.error("Error verifying token:", err);
-        res.status(httpStatus.NOT_FOUND).json({ error: "Invalid token" });
-      });
-  } else {
-    res.status(httpStatus.BAD_REQUEST).json({ error: "Token not provided" });
+export const getUserById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const id = Number(req.params.id);
+    if (!id || typeof id != "number") {
+      res.status(400);
+      throw new Error("Invalid id provided");
+    }
+    const data = await userService.getUserById(id);
+    if (!data) {
+      res.status(404);
+      throw new Error("User not found");
+    }
+    res.status(200).json(new SoccerQResponse(200, data, null));
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
+};
+
+export const uploadUserData = async (
+  req: TokenRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = req.user?.id;
+    await userService.uploadCsv(req.file, userId);
+    res.status(200).json(new SoccerQResponse(200, null, null));
+  } catch (error) {
+    console.log(error);
+    next(error);
   }
 };
