@@ -3,24 +3,44 @@
   "version": "1.0.0",
   "description": "",
   "main": "src/server.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/soccerq/soccerq-be"
+  },
   "scripts": {
     "build": "npx tsc",
-    "start": "node dist/server.js",
+    "start": "knex migrate:latest --env develop && node dist/server.js",
     "dev": "nodemon src/server.ts",
-    "prestart": "npm run build"
+    "prestart": "npm run build",
+    "create:migration": "knex migrate:make",
+    "start:migrations": "knex migrate:latest --env develop",
+    "revert:migrations": "knex migrate:rollback --env develop",
+    "create:seed": "knex seed:make",
+    "start:seed": "knex seed:run"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@types/pg": "^8.11.4",
     "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
-    "pg": "^8.11.5"
+    "google-auth-library": "^9.7.0",
+    "http-status": "^1.7.4",
+    "jsonwebtoken": "^9.0.2",
+    "knex": "^3.1.0",
+    "multer": "^1.4.5-lts.1",
+    "pg": "^8.11.5",
+    "pg-format": "^1.0.4"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/multer": "^1.4.11",
     "@types/node": "^20.12.4",
+    "@types/pg-format": "^1.0.5",
     "@typescript-eslint/eslint-plugin": "^7.5.0",
     "@typescript-eslint/parser": "^7.5.0",
     "concurrently": "^8.2.2",
