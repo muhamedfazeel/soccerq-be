@@ -10,8 +10,7 @@ export const loginUser = async (req: Request, res: Response) => {
     authService
       .loginUser(credential)
       .then(async (data) => {
-        const token = await authService.authenticateUser(data);
-        res.status(201).json({ token });
+        res.status(201).json({ token: data });
       })
       .catch((err) => {
         console.error("Error verifying token:", err);

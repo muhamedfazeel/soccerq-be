@@ -9,7 +9,7 @@
   },
   "scripts": {
     "build": "npx tsc",
-    "start": "node dist/server.js",
+    "start": "knex migrate:latest --env develop && node dist/server.js",
     "dev": "nodemon src/server.ts",
     "prestart": "npm run build",
     "create:migration": "knex migrate:make",

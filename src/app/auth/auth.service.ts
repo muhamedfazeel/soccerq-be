@@ -1,8 +1,8 @@
 import { OAuth2Client, TokenPayload } from "google-auth-library";
 import jwt from "jsonwebtoken";
 import { config } from "../../config/config";
-import * as authRepo from "./auth.repo";
 import { CustomError } from "../../util/error.class";
+import * as authRepo from "./auth.repo";
 
 export const loginUser = async (credential: string) => {
   const client = new OAuth2Client();
@@ -12,15 +12,14 @@ export const loginUser = async (credential: string) => {
     audience: config.google.clientId,
   });
   const payload: TokenPayload | undefined = ticket.getPayload(); // Ensure payload is of type TokenPayload
-  const userid: string | null = payload ? payload.sub : null;
-  return { payload, userid };
+  return authenticateUser(payload);
 };
 
-export const authenticateUser = async (data: any) => {
+const authenticateUser = async (data: any) => {
   const user = await authRepo.upsertUserData(
-    data?.payload?.name,
-    data?.payload?.email,
-    data?.payload?.picture
+    data?.name,
+    data?.email,
+    data?.picture
   );
   if (user) {
     const token = jwt.sign(
