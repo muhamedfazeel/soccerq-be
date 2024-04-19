@@ -1,7 +1,5 @@
 import { Request, Response } from "express";
 import httpStatus from "http-status";
-import jwt from "jsonwebtoken";
-import * as authRepo from "./auth.repo";
 import * as authService from "./auth.service";
 
 export const loginUser = async (req: Request, res: Response) => {
@@ -12,24 +10,8 @@ export const loginUser = async (req: Request, res: Response) => {
     authService
       .loginUser(credential)
       .then(async (data) => {
-        const user = await authRepo.upsertUserData(
-          data?.payload?.name,
-          data?.payload?.email,
-          data?.payload?.picture
-        );
-        if (user) {
-          const token = jwt.sign(
-            {
-              user: { email: user.email, name: user.name, id: user.id },
-            },
-            process.env.TOKEN_SECRET || "",
-            { expiresIn: process.env.EXPIRY }
-          );
-          res.status(201).json({ token });
-        } else {
-          res.status(401);
-          throw new Error("unauthorised");
-        }
+        const token = await authService.authenticateUser(data);
+        res.status(201).json({ token });
       })
       .catch((err) => {
         console.error("Error verifying token:", err);

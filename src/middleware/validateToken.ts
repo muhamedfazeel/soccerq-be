@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { TokenRequest } from "../shared/dto/modifiedRequest.dto";
+import { CustomError } from "../util/error.class";
 
 export const tokenHandler = async (
   req: Request,
@@ -14,15 +15,13 @@ export const tokenHandler = async (
       token = headers.split(" ")[1];
       jwt.verify(token, process.env.TOKEN_SECRET || "", (err, decoded) => {
         if (err) {
-          res.status(401);
-          throw new Error("user not authenticated");
+          throw new CustomError("user not authenticated", 401);
         }
         (req as TokenRequest).user = (decoded as JwtPayload).user;
         next();
       });
     } else {
-      res.status(401);
-      throw new Error("no token provided");
+      throw new CustomError("no token provided", 401);
     }
   } catch (error) {
     console.log(error);

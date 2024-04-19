@@ -1,4 +1,4 @@
-export class SoccerQResponse {
+export class CustomResponse {
   status: number | undefined;
   data: object | Array<object> | undefined | null;
   message: string | undefined | null;

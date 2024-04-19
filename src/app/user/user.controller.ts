@@ -1,7 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import { TokenRequest } from "../../shared/dto/modifiedRequest.dto";
-import { SoccerQResponse } from "../../util/response.class";
+import { CustomError } from "../../util/error.class";
+import { CustomResponse } from "../../util/response.class";
 import * as userService from "./user.service";
+import * as userValidation from "./user.validation";
 
 export const getAllUsers = async (
   req: Request,
@@ -10,9 +12,8 @@ export const getAllUsers = async (
 ) => {
   try {
     const data = await userService.getAllUsers();
-    res.status(200).json(new SoccerQResponse(200, data, null));
+    res.status(200).json(new CustomResponse(200, data, null));
   } catch (err) {
-    res.status(500);
     next(err);
   }
 };
@@ -24,18 +25,14 @@ export const getUserById = async (
 ) => {
   try {
     const id = Number(req.params.id);
-    if (!id || typeof id != "number") {
-      res.status(400);
-      throw new Error("Invalid id provided");
-    }
+    userValidation.validateUser(id);
     const data = await userService.getUserById(id);
     if (!data) {
-      res.status(404);
-      throw new Error("User not found");
+      throw new CustomError("User not found", 404);
     }
-    res.status(200).json(new SoccerQResponse(200, data, null));
-  } catch (err) {
-    console.log(err);
+    res.status(200).json(new CustomResponse(200, data, null));
+  } catch (err: any) {
+    res.status(err.status);
     next(err);
   }
 };
@@ -48,7 +45,7 @@ export const uploadUserData = async (
   try {
     const userId = req.user?.id;
     await userService.uploadCsv(req.file, userId);
-    res.status(200).json(new SoccerQResponse(200, null, null));
+    res.status(200).json(new CustomResponse(200, null, null));
   } catch (error) {
     console.log(error);
     next(error);
