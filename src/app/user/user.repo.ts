@@ -54,7 +54,9 @@ function generateInsertData(dataToInsert: any[]) {
 function addUserExtraFields(dataArray: any[], userId: number | undefined) {
   const nowTime = new Date();
   dataArray = dataArray.map((el) => ({
-    ...el,
+    name: el.name,
+    email: el.email,
+    image_url: el.image_url,
     is_player: true,
     updated_by: userId,
     created_at: nowTime,

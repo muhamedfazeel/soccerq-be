@@ -23,6 +23,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
  */
 app.use("/api/v1/auth", appRoutes.authRoutes);
 app.use("/api/v1/users", appRoutes.userRoutes);
+app.use("/api/v1/teams", appRoutes.teamRoutes);
 
 //error handling middleware
 app.use(errorHandler);
